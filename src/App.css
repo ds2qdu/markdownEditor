@@ -1,0 +1,704 @@
+:root {
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-mono: "SFMono-Regular", ui-monospace, "JetBrains Mono", Menlo, Consolas,
+    monospace;
+
+  /* Light theme (default) */
+  --bg: #ffffff;
+  --bg-elevated: #f6f8fa;
+  --bg-inset: #eaeef2;
+  --text: #1f2328;
+  --text-muted: #656d76;
+  --border: #d0d7de;
+  --accent: #0969da;
+  --hover: rgba(31, 35, 40, 0.06);
+  --active: rgba(31, 35, 40, 0.1);
+  --shadow: rgba(31, 35, 40, 0.12);
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d1117;
+  --bg-elevated: #161b22;
+  --bg-inset: #010409;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --border: #30363d;
+  --accent: #4493f8;
+  --hover: rgba(255, 255, 255, 0.08);
+  --active: rgba(255, 255, 255, 0.12);
+  --shadow: rgba(1, 4, 9, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  background-color: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* ---------- Toolbar ---------- */
+.toolbar {
+  flex: 0 0 auto;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  background-color: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+
+.toolbar__brand {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbar__group--right {
+  margin-left: auto;
+  gap: 8px;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: var(--hover);
+}
+
+.btn:active:not(:disabled) {
+  background-color: var(--active);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.btn--icon {
+  width: 30px;
+  padding: 0;
+  color: var(--text-muted);
+}
+
+.btn--icon:hover:not(:disabled) {
+  color: var(--text);
+}
+
+/* ---------- Segmented mode switch ---------- */
+.seg {
+  display: inline-flex;
+  padding: 2px;
+  background-color: var(--bg-inset);
+  border-radius: 7px;
+}
+
+.seg__btn {
+  height: 26px;
+  padding: 0 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+
+.seg__btn:hover {
+  color: var(--text);
+}
+
+.seg__btn--active {
+  color: var(--text);
+  background-color: var(--bg);
+  box-shadow: 0 1px 2px var(--shadow);
+}
+
+/* ---------- Editor area ---------- */
+.editorpane {
+  flex: 1 1 auto;
+  display: flex;
+  overflow: hidden;
+  background-color: var(--bg);
+}
+
+.editor__source {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.editor__source .cm-editor {
+  height: 100%;
+}
+
+.editor__source .cm-editor.cm-focused {
+  outline: none;
+}
+
+/* Vim 상태바/명령줄 패널 — 우리 테마에 맞춤. */
+.editor__source .cm-panels {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border-top: 1px solid var(--border);
+}
+
+.editor__source .cm-vim-panel,
+.editor__source .cm-panel.cm-vim-panel {
+  padding: 3px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+}
+
+.editor__source .cm-vim-panel input {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+/* ---------- Milkdown (Render 모드) ---------- */
+.editor__render {
+  flex: 1 1 auto;
+  width: 100%;
+  overflow: auto;
+}
+
+.milkdown {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 36px 28px 96px;
+}
+
+.milkdown .ProseMirror {
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.7;
+  word-wrap: break-word;
+}
+
+.milkdown .ProseMirror > :first-child {
+  margin-top: 0;
+}
+
+.milkdown p {
+  margin: 0 0 0.9em;
+}
+
+.milkdown h1,
+.milkdown h2,
+.milkdown h3,
+.milkdown h4,
+.milkdown h5,
+.milkdown h6 {
+  margin: 1.4em 0 0.5em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.milkdown h1 {
+  font-size: 1.9em;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--border);
+}
+
+.milkdown h2 {
+  font-size: 1.5em;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid var(--border);
+}
+
+.milkdown h3 {
+  font-size: 1.25em;
+}
+
+.milkdown h4 {
+  font-size: 1.05em;
+}
+
+.milkdown h5 {
+  font-size: 0.95em;
+}
+
+.milkdown h6 {
+  font-size: 0.9em;
+  color: var(--text-muted);
+}
+
+.milkdown a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.milkdown a:hover {
+  text-decoration: underline;
+}
+
+.milkdown strong {
+  font-weight: 700;
+}
+
+.milkdown em {
+  font-style: italic;
+}
+
+.milkdown del {
+  color: var(--text-muted);
+}
+
+.milkdown ul,
+.milkdown ol {
+  margin: 0 0 0.9em;
+  padding-left: 1.6em;
+}
+
+.milkdown li {
+  margin: 0.25em 0;
+}
+
+.milkdown blockquote {
+  margin: 0 0 0.9em;
+  padding: 0.2em 1em;
+  border-left: 3px solid var(--border);
+  color: var(--text-muted);
+}
+
+.milkdown :not(pre) > code {
+  padding: 0.15em 0.4em;
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--bg-inset);
+  border-radius: 4px;
+}
+
+.milkdown pre {
+  margin: 0 0 0.9em;
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.5;
+  background: var(--bg-inset);
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.milkdown pre code {
+  padding: 0;
+  font-family: inherit;
+  background: none;
+}
+
+.milkdown hr {
+  margin: 1.5em 0;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+.milkdown img {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+/* 이미지 NodeView 래퍼(<span>) — 실제 <img>를 감싼다. */
+.milkdown .milkdown-image-wrap {
+  display: inline-block;
+  max-width: 100%;
+  line-height: 0;
+}
+
+/* Obsidian식 임베드(`![[name]]`)는 블록으로 — 같은 문단의 뒤 텍스트가 이미지 아래로 내려간다. */
+.milkdown .milkdown-image-wrap--embed {
+  display: block;
+  margin: 0.2em 0;
+}
+
+/* `![[name]]`(attachments) 또는 URL 이미지를 못 찾았을 때의 자리표시. */
+.milkdown img.milkdown-image--missing {
+  display: inline-flex;
+  align-items: center;
+  min-width: 140px;
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  background: var(--bg-inset);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.milkdown table {
+  margin: 0 0 0.9em;
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.95em;
+}
+
+.milkdown th,
+.milkdown td {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.milkdown th {
+  background: var(--bg-elevated);
+  font-weight: 600;
+}
+
+.milkdown li[data-item-type="task"] {
+  list-style: none;
+  position: relative;
+}
+
+.milkdown li[data-item-type="task"]::before {
+  content: "";
+  position: absolute;
+  left: -1.4em;
+  top: 0.3em;
+  width: 1.05em;
+  height: 1.05em;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.milkdown li[data-item-type="task"][data-checked="true"]::before {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.milkdown li[data-item-type="task"][data-checked="true"]::after {
+  content: "";
+  position: absolute;
+  left: -1.04em;
+  top: 0.46em;
+  width: 0.3em;
+  height: 0.55em;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ---------- Recent files dropdown ---------- */
+.recent {
+  position: relative;
+  display: inline-flex;
+}
+
+.recent__menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 20;
+  min-width: 200px;
+  max-width: 360px;
+  padding: 4px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+.recent__item {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  text-align: left;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent__item:hover {
+  background: var(--hover);
+}
+
+.recent__sep {
+  height: 1px;
+  margin: 4px 2px;
+  background: var(--border);
+}
+
+.recent__clear {
+  color: var(--text-muted);
+}
+
+/* ---------- Status bar ---------- */
+.statusbar {
+  flex: 0 0 auto;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  background-color: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  user-select: none;
+}
+
+.statusbar__spacer {
+  flex: 1 1 auto;
+}
+
+.statusbar__file {
+  color: var(--text);
+}
+
+.statusbar__divider {
+  width: 1px;
+  height: 12px;
+  background-color: var(--border);
+}
+
+/* ---------- Settings modal (옵션창) ---------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.modal__panel {
+  width: min(420px, 100%);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px var(--shadow);
+  overflow: hidden;
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.modal__body {
+  padding: 4px 16px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.field:last-child {
+  border-bottom: none;
+}
+
+.field__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.field__hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* 읽기 전용 정보 행(버전 · 이메일). */
+.field__value {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  user-select: text;
+}
+
+.field__value--link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.field__value--link:hover {
+  text-decoration: underline;
+}
+
+/* 버전 옆 빌드 시각 — 버전보다 살짝 작고 흐리게 */
+.field__sub {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.modal__hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* 토글 스위치 */
+.switch {
+  display: inline-flex;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.switch__track {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.switch__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.switch input:checked + .switch__track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.switch input:checked + .switch__track .switch__thumb {
+  transform: translateX(16px);
+  background: #fff;
+}
+
+.switch input:focus-visible + .switch__track {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 파일 드래그&드롭 오버레이 (드래그 중에만 표시) */
+.dropzone {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: none; /* 네이티브 drop을 가리지 않도록 */
+}
+
+.dropzone__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 48px;
+  border: 2px dashed var(--accent);
+  border-radius: 16px;
+  background: var(--bg-elevated);
+  box-shadow: 0 12px 40px var(--shadow);
+}
+
+.dropzone__icon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.dropzone__text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
