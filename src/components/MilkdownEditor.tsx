@@ -125,7 +125,14 @@ function stripEmptyLineBr(md: string): string {
 // ProseMirror는 종단 노드 뒤로 빠져나갈 문단이 없으면 커서가 갇혀, 마지막이 코드블록이면 그 아래로
 // 내려가/클릭해 새 텍스트를 쓸 수 없다(Source 모드엔 없는 문제). 빈 문단을 항상 뒤에 둬서 해결한다.
 // 내용이 실제로 바뀐 트랜잭션(docChanged)에만 반응 → 로드 직후 단순 클릭/선택으로 문단이 붙어
-// dirty로 잡히는 일이 없다(초기 삽입은 마운트 시 addToHistory:false로 별도 처리).
+// dirty로 잡히는 일이 없다.
+//
+// ⚠️ 삽입 트랜잭션은 반드시 `addToHistory:false`로 표시한다. 이 빈 문단은 사용자 편집이 아니라
+// 커서 이동용 뷰 편의장치이므로 (1) undo 히스토리에 들어가면 안 되고 (2) 리스너(markdownUpdated)가
+// 이를 문서 변경(=dirty)으로 오인하면 안 된다. 특히 **파일 로드 시**: 초기 본문 주입 트랜잭션이
+// 리스트/코드블록/표 등으로 끝나면 이 플러그인이 곧바로 빈 문단을 붙이는데, 여기에 addToHistory:false를
+// 빠뜨리면 리스너가 "끝에 빈 줄 추가됨"을 편집으로 간주해 **파일을 열자마자 dirty**가 된다(실측 버그).
+// addToHistory:false면 리스너가 이 트랜잭션을 무시하고, 사용자의 실제 편집만 dirty로 잡는다.
 const trailingParagraph = $prose(
   () =>
     new Plugin({
@@ -136,7 +143,9 @@ const trailingParagraph = $prose(
         if (last && last.type.name === "paragraph") return null;
         const node = newState.schema.nodes.paragraph?.createAndFill();
         if (!node) return null;
-        return newState.tr.insert(newState.doc.content.size, node);
+        return newState.tr
+          .insert(newState.doc.content.size, node)
+          .setMeta("addToHistory", false);
       },
     }),
 );
